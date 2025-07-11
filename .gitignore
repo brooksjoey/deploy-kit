@@ -1,0 +1,7 @@
+*.log
+*.swp
+.env
+__pycache__/
+*.bak
+node_modules/
+.vscode/
