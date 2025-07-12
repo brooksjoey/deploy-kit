@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotton-Hutcheson Machinery Procurement</title>
+    <style>
+        /* Industrial color scheme - yellow and black */
+        :root {
+            --primary-yellow: #FFD700;
+            --primary-black: #121212;
+            --secondary-gray: #333333;
+            --text-light: #F5F5F5;
+            --text-dark: #121212;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #A9A9A9;
+            margin: 0;
+            padding: 0;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header styling - industrial look */
+        .header {
+            background-color: var(--primary-black);
+            color: var(--primary-yellow);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--primary-yellow);
+            margin-bottom: 30px;
+        }
+
+        .split-header {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .header-line1 {
+            font-weight: 600;
+        }
+
+        .header-line2 {
+            font-weight: 400;
+            margin-top: 5px;
+        }
+
+        /* Content container */
+        .content {
+            background-color: white;
+            padding: 25px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Download section */
+        .download-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-left: 4px solid var(--primary-yellow);
+        }
+
+        /* File list styling */
+        .file-list {
+            margin: 20px 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .file-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-list li:before {
+            content: "•";
+            color: var(--primary-yellow);
+            font-weight: bold;
+            display: inline-block;
+            width: 20px;
+            margin-left: -20px;
+        }
+
+        /* Download button - industrial style */
+        .download-btn {
+            display: inline-block;
+            background-color: var(--primary-yellow);
+            color: var(--primary-black);
+            padding: 12px 25px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background-color: #e6c200;
+            transform: translateY(-1px);
+        }
+
+        /* Toast notification */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--secondary-gray);
+            color: var(--text-light);
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            right: 30px;
+            bottom: 30px;
+            font-size: 14px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        /* Footer styling */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--primary-black);
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Industrial header with company branding -->
+    <header class="header">
+        <h1 class="split-header">
+            <span class="header-line1">COTTON-HUTCHESON MACHINERY</span>
+            <span class="header-line2">PARTS PROCUREMENT</span>
+        </h1>
+    </header>
+
+    <div class="content">
+        <!-- Realistic procurement description -->
+        <p>Compiled Q3 purchase list WITHOUT updated vendor pricing. This list for NEW SUPPLIERS only. Regular or pre-existing vendor purchase list is separate.</p>
+
+        <!-- Download section -->
+        <div class="download-section">
+            <h2>Q3 Purchase List Delivery</h2>
+
+            <!-- Download button with ID for JS targeting -->
+            <button id="downloadBtn" class="download-btn">View Purchase List</button>
+        </div>
+
+        <p>For any discrepancies or questions, contact procurement@cotton-hutcheson.com or call (864) 555-0192.</p>
+    </div>
+
+    <!-- Toast notification element (hidden by default) -->
+    <div id="toast" class="toast">Download started...</div>
+
+    <!-- Simple footer -->
+    <footer class="footer">
+        <p>Cotton-Hutcheson Heavy Machinery Parts &middot; Confidential</p>
+    </footer>
+
+    <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get elements
+            const downloadBtn = document.getElementById('downloadBtn');
+            const toast = document.getElementById('toast');
+            
+            // File download configuration - easy to modify
+            const fileUrl = 'https://example.com/delivery/Q3_Purchase_List.zip';
+            const fileName = 'Q3_Purchase_List.zip';
+
+            // Download button click handler
+            downloadBtn.addEventListener('click', function() {
+                // Show toast notification
+                toast.className = 'toast show';
+                
+                // Hide toast after animation completes
+                setTimeout(function(){
+                    toast.className = toast.className.replace('show', '');
+                }, 3000);
+
+                // Create hidden download link and trigger click
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Optional: Log download attempt (remove in production)
+                console.log(`Download triggered: ${fileName}`);
+            });
+        });
+    </script>
+</body>
+</html>
