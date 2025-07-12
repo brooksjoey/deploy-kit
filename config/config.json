@@ -1,0 +1,117 @@
+{
+  "environment": "production",
+  "logLevel": "info",
+  "deploymentPath": "/var/www/html",
+  "backupEnabled": true,
+  "maxBackups": 5,
+  
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "deploy_kit_db",
+    "user": "deploy_user",
+    "password": "${DB_PASSWORD}",
+    "ssl": true,
+    "connectionPool": {
+      "min": 2,
+      "max": 20,
+      "idle": 10000
+    }
+  },
+  
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "password": "${REDIS_PASSWORD}",
+    "db": 0
+  },
+  
+  "services": [
+    "nginx",
+    "php-fpm",
+    "redis-server"
+  ],
+  
+  "deployment": {
+    "strategy": "rolling",
+    "timeout": 300,
+    "healthCheckUrl": "http://localhost/health",
+    "preDeployCommands": [
+      "npm run build",
+      "composer install --no-dev --optimize-autoloader"
+    ],
+    "postDeployCommands": [
+      "php artisan migrate --force",
+      "php artisan cache:clear",
+      "php artisan config:cache"
+    ]
+  },
+  
+  "notifications": {
+    "enabled": true,
+    "channels": {
+      "slack": {
+        "webhook": "${SLACK_WEBHOOK_URL}",
+        "channel": "#deployments"
+      },
+      "email": {
+        "smtp": {
+          "host": "smtp.example.com",
+          "port": 587,
+          "secure": false,
+          "auth": {
+            "user": "${SMTP_USER}",
+            "pass": "${SMTP_PASSWORD}"
+          }
+        },
+        "from": "deployments@example.com",
+        "to": ["ops@example.com", "dev@example.com"]
+      }
+    }
+  },
+  
+  "security": {
+    "allowedIPs": [
+      "192.168.1.0/24",
+      "10.0.0.0/8"
+    ],
+    "requireAuth": true,
+    "apiKeys": {
+      "admin": "${ADMIN_API_KEY}",
+      "deploy": "${DEPLOY_API_KEY}"
+    },
+    "rateLimiting": {
+      "windowMs": 900000,
+      "max": 100
+    }
+  },
+  
+  "monitoring": {
+    "enabled": true,
+    "metricsPort": 9090,
+    "healthCheck": {
+      "enabled": true,
+      "interval": 30,
+      "timeout": 5,
+      "endpoints": [
+        "/health",
+        "/api/health"
+      ]
+    }
+  },
+  
+  "git": {
+    "repository": "https://github.com/brooksjoey/deploy-kit.git",
+    "branch": "main",
+    "deployKey": "${DEPLOY_KEY_PATH}",
+    "webhookSecret": "${GITHUB_WEBHOOK_SECRET}"
+  },
+  
+  "features": {
+    "autoDeployOnPush": false,
+    "rollbackOnFailure": true,
+    "slackNotifications": true,
+    "backupBeforeDeploy": true,
+    "healthCheckAfterDeploy": true
+  }
+}
